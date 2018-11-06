@@ -4,14 +4,7 @@ var gameEngine = (function() {
     var height;
     var paused = true;
     var keys = {};
-    var camera = {
-        x: 0,
-        y: 0,
-        rotation: 0,
-        zoom: 1,
-        bound_renderable: null
-    };
-
+    
     function onResize(event) {
         if(event.target.innerWidth < width) {
             canvas.width = window.innerWidth;
