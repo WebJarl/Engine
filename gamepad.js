@@ -44,14 +44,37 @@
                     var axis = gamepad.axes[axis_index];
                     return axis;
                 }
-            }
+            };
+
+            this.isConnected = function() {
+                return !!gamepad;
+            };
         };
     };
 
+    var connection_callbacks = [];
+    var disconnection_callbacks = [];
+
+    gameEngine.onGamePadConnected = function(cb) {
+        connection_callbacks.push(cb);
+    };
+
+    gameEngine.onGamePadDisconnected = function(cb) {
+        disconnection_callbacks.push(cb);
+    };
+
     function onGamePadConnected(event) {
+        for(var i in connection_callbacks) {
+            var callback = connection_callbacks[i];
+            callback(event.gamepad.index);
+        }
     }
 
     function onGamePadDisconnected(event) {
+        for(var i in disconnection_callbacks) {
+            var callback = disconnection_callbacks[i];
+            callback(event.gamepad.index);
+        }
     }
 
     window.addEventListener("gamepadconnected", onGamePadConnected, false);
