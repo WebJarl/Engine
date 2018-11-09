@@ -136,6 +136,18 @@ gameEngine.renderer = {
         
                     return renderable;
                 };
+
+                this.destroyRenderable = function(renderable) {
+                    for(var layer_i in layers) {
+                        var layer = layers[layer_i];
+                        for(var renderable_i in layer) {
+                            if(layer[renderable_i] == renderable) {
+                                layer.splice(renderable_i, 1);
+                                return;
+                            }
+                        }
+                    }
+                };
         
                 this.render = function() {
                     if(camera.bound_renderable) {
@@ -160,13 +172,18 @@ gameEngine.renderer = {
                                         ctx.fillStyle = "white";
                                         ctx.strokeStyle = "white";
                                     }
+
+                                    ctx.translate(renderable.x - camera.x, renderable.y - camera.y);
+                                    if(renderable.rotation) {
+                                        ctx.rotate(renderable.rotation);
+                                    }
             
                                     if(renderable.type === 'RECTANGLE') {
-                                        ctx.fillRect(renderable.x - camera.x, renderable.y - camera.y, renderable.w, renderable.h);
+                                        ctx.fillRect(0, 0, renderable.w, renderable.h);
             
                                     } else if(renderable.type === 'CIRCLE') {
                                         ctx.beginPath();
-                                        ctx.arc(renderable.x - camera.x, renderable.y - camera.y, renderable.radius, 0, 2*Math.PI);
+                                        ctx.arc(0, 0, renderable.radius, 0, 2*Math.PI);
                                         ctx.closePath();
             
                                     } else if(renderable.type === 'TEXT') {
@@ -182,7 +199,7 @@ gameEngine.renderer = {
                                             font += " sans-serif";
                                         }
                                         ctx.font = font;
-                                        ctx.fillText(renderable.text, renderable.x - camera.x, renderable.y - camera.y);
+                                        ctx.fillText(renderable.text, 0, 0);
             
                                     } else if(renderable.type === 'TILE') {
                                         if(renderable.tileset && renderable.tileset.loaded) {
@@ -190,7 +207,7 @@ gameEngine.renderer = {
                                             var rows = Math.floor(renderable.tileset.height / renderable.tileset.tile_height);
                                             var start_x = (renderable.sprite % tiles_in_row) * renderable.tileset.tile_width;
                                             var start_y = (Math.floor(renderable.sprite / tiles_in_row) % rows) * renderable.tileset.tile_height;
-                                            ctx.drawImage(renderable.tileset.image, start_x, start_y, renderable.tileset.tile_width, renderable.tileset.tile_height, renderable.x - camera.x, renderable.y - camera.y, renderable.w, renderable.h);
+                                            ctx.drawImage(renderable.tileset.image, start_x, start_y, renderable.tileset.tile_width, renderable.tileset.tile_height, 0, 0, renderable.w, renderable.h);
                                         }
             
                                     } else if(renderable.type === 'IMAGE') {
@@ -198,11 +215,10 @@ gameEngine.renderer = {
                                             var scale_x = renderable.w / renderable.image.width;
                                             var scale_y = renderable.h / renderable.image.height;
                                             ctx.scale(scale_x, scale_y);
-            
                                             ctx.drawImage(renderable.image, 0, 0,
                                                 renderable.image.width, renderable.image.height,
-                                                (renderable.x - camera.x) / scale_x,
-                                                (renderable.y - camera.y) / scale_y,
+                                                -1 * renderable.image.width/2,
+                                                -1 * renderable.image.height/2,
                                                 renderable.image.width, renderable.image.height);
                                             
                                             ctx.scale(1 / scale_x, 1 / scale_y);
@@ -211,8 +227,7 @@ gameEngine.renderer = {
                                     } else if(renderable.type === 'LINE') {
                                         if(renderable.x0 !== undefined && renderable.y0 !== undefined) {
                                             ctx.beginPath();
-                                            ctx.moveTo((renderable.x - camera.x) / scale_x, (renderable.y - camera.y) / scale_y);
-                                            ctx.lineTo((renderable.x0 - camera.x) / scale_x, (renderable.y0 - camera.y) / scale_y);
+                                            ctx.lineTo(renderable.x0, renderable.y0);
                                             ctx.closePath();
                                             //ctx.stroke(); // has to be here if we don't stroke for each renderable
                                         }
@@ -220,9 +235,15 @@ gameEngine.renderer = {
                                     } else { // unexpected renderable.type
                                         console.warn("Unexpected renderable type: ", renderable.type);
                                     }
-                                    
-                                    if(renderable.type !== 'IMAGE' && renderable.type !== 'RECTANGLE')
+
+                                    if(renderable.type !== 'IMAGE' && renderable.type !== 'RECTANGLE') {
                                         ctx.stroke();
+                                    }
+                                    
+                                    if(renderable.rotation) {
+                                        ctx.rotate(-1 * renderable.rotation);
+                                    }
+                                    ctx.translate(-1 * (renderable.x - camera.x), -1 * (renderable.y - camera.y));
                                 }
                             }
                         }
