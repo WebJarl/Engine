@@ -108,6 +108,9 @@ var gameEngine = (function() {
                                     if(gameEngine.renderer) {
                                         gameEngine.renderer.render();
                                     }
+                                    if(gameEngine.particleEffects) {
+                                        gameEngine.particleEffects.tick(current_time - last_time);
+                                    }
     
                                     if(params && params.onTick) {
                                         params.onTick(current_time - last_time);
