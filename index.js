@@ -3,8 +3,7 @@ var gameEngine = (function() {
     var width;
     var height;
     var paused = true;
-    var keys = {};
-    
+
     function onResize(event) {
         if(event.target.innerWidth < width) {
             canvas.width = window.innerWidth;
@@ -20,14 +19,6 @@ var gameEngine = (function() {
         gameEngine.renderer.render();
     }
 
-    function onKeyUp(event) {
-        keys[event.key] = false;
-    }
-
-    function onKeyDown(event) {
-        keys[event.key] = true;
-    }
-
     return new function() {
         this.getWidth = function() {
             return canvas.width;
@@ -36,11 +27,7 @@ var gameEngine = (function() {
         this.getHeight = function() {
             return canvas.height;
         };
-
-        this.keyIsDown = function(keycode) {
-            return keys[keycode];
-        };
-		
+        
 		this.pause = function() {
             paused = true;
         };
@@ -106,8 +93,6 @@ var gameEngine = (function() {
                     
                     if(window && window.addEventListener) {
                         window.addEventListener('resize', onResize, false);
-                        window.addEventListener('keyup', onKeyUp, false);
-                        window.addEventListener('keydown', onKeyDown, false);
                     } else {
                         console.warn("Unable to add event listener to window");
                     }
