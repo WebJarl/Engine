@@ -98,7 +98,6 @@ var gameEngine = (function() {
                     }
 
                     if(setInterval) {
-                        var renderer = this.renderer;
                         setInterval((function() {
                             var last_time = new Date();
 
@@ -106,7 +105,9 @@ var gameEngine = (function() {
                                 var current_time = new Date();
                                 
                                 if(!paused) {
-                                    renderer.render();
+                                    if(gameEngine.renderer) {
+                                        gameEngine.renderer.render();
+                                    }
     
                                     if(params && params.onTick) {
                                         params.onTick(current_time - last_time);
