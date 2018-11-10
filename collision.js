@@ -19,5 +19,11 @@ gameEngine.collision = function() {
                 p.y >= rect.y && p.y <= rect.y + rect.h
             );
         };
+
+        this.pointWithinCircle = function(point, circle) {
+            return (
+                Math.sqrt(Math.abs(Math.pow(point.y - circle.y, 2) + Math.pow(point.x - circle.x, 2))) < Math.abs(circle.radius)
+            );
+        };
     };
 }();
