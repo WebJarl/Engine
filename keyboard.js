@@ -11,6 +11,13 @@
         for(var i in down_listeners) {
             var listener = down_listeners[i];
             if(listener.key == event.key) {
+                event.preventDefault();
+                if(event.stopPropagation){
+                    event.stopPropagation();
+                } else if(window.event){
+                    window.event.cancelBubble = true;
+                }
+                
                 listener.callback();
             }
         }
