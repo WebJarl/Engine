@@ -183,7 +183,7 @@ gameEngine.renderer = {
             
                                     } else if(renderable.type === 'CIRCLE') {
                                         ctx.beginPath();
-                                        ctx.arc(0, 0, renderable.radius, 0, 2*Math.PI);
+                                        ctx.arc(0, 0, Math.abs(renderable.radius), 0, 2*Math.PI);
                                         ctx.closePath();
             
                                     } else if(renderable.type === 'TEXT') {
